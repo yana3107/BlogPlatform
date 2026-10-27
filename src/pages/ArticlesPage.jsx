@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import '../App.css';
+
 function ArticlesPage() {
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -9,6 +11,11 @@ function ArticlesPage() {
 
   const limit = 10;
   const totalPages = Math.ceil(articlesCount / limit);
+  const pagesPerGroup = 7;
+
+  const currentGroup = Math.ceil(currentPage / pagesPerGroup);
+  const firstPage = (currentGroup - 1) * pagesPerGroup + 1;
+  const lastPage = Math.min(firstPage + pagesPerGroup - 1, totalPages);
 
   useEffect(() => {
     async function fetchArticles() {
@@ -23,7 +30,7 @@ function ArticlesPage() {
         );
 
         if (!response.ok) {
-          throw new Error('Не удалось загрузить');
+          throw new Error('Не удалось загрузить статьи');
         }
 
         const data = await response.json();
@@ -41,48 +48,108 @@ function ArticlesPage() {
   }, [currentPage]);
 
   if (loading) {
-    return <p>Загрузка статей.</p>;
+    return <p className="articles-message">Загрузка статей.</p>;
   }
 
   if (error) {
-    return <p>Ошибка {error}</p>;
+    return <p className="articles-message">Ошибка {error}</p>;
   }
 
   return (
-    <div>
-      <h1>Список статей</h1>
+    <main className="articles-page">
+      <div className="articles-container">
+        <h1 className="articles-heading">Articles</h1>
 
-      {articles.map((article) => (
-        <article key={article.slug}>
-          <h2>
-            <Link to={`/articles/${article.slug}`}>{article.title}</Link>
-          </h2>
-          <p>{article.description}</p>
-          <p>Автор: {article.author.username}</p>
-        </article>
-      ))}
+        <div className="articles-list">
+          {articles.map((article) => (
+            <article className="article-card" key={article.slug}>
+              <div className="article-card-header">
+                <div className="article-author">
+                  {article.author.image ? (
+                    <img
+                      className="author-avatar"
+                      src={article.author.image}
+                      alt=""
+                    />
+                  ) : (
+                    <div className="author-avatar author-avatar-placeholder">
+                      {article.author.username?.charAt(0).toUpperCase()}
+                    </div>
+                  )}
 
-      <div>
-        <button
-          onClick={() => setCurrentPage(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Назад
-        </button>
+                  <div>
+                    <p className="author-name">{article.author.username}</p>
+                    <p className="article-date">
+                      {article.createdAt
+                        ? new Date(article.createdAt).toLocaleDateString(
+                            'en-US',
+                            {
+                              month: 'long',
+                              day: 'numeric',
+                              year: 'numeric',
+                            },
+                          )
+                        : ''}
+                    </p>
+                  </div>
+                </div>
 
-        <span>
-          {' '}
-          Страница {currentPage} из {totalPages}{' '}
-        </span>
+                <button
+                  className="favorite-button"
+                  type="button"
+                  disabled
+                  aria-label={`Favorites: ${article.favoritesCount}`}
+                >
+                  <span aria-hidden="true">♥</span>
+                  {article.favoritesCount}
+                </button>
+              </div>
 
-        <button
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages || totalPages === 0}
-        >
-          Далее
-        </button>
+              <Link className="article-title" to={`/articles/${article.slug}`}>
+                {article.title}
+              </Link>
+
+              <p className="article-description">{article.description}</p>
+
+              <div className="article-tags">
+                {(article.tagList || []).map((tag) => (
+                  <span className="article-tag" key={tag}>
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+
+        {totalPages > 0 && (
+          <nav className="pagination" aria-label="Pagination">
+            {Array.from(
+              { length: lastPage - firstPage + 1 },
+              (_, index) => firstPage + index,
+            ).map((page) => (
+              <button
+                className={`pagination-button ${
+                  currentPage === page ? 'active' : ''
+                }`}
+                key={page}
+                type="button"
+                onClick={() => {
+                  const nextPage =
+                    page === lastPage && page < totalPages ? page + 1 : page;
+
+                  setCurrentPage(nextPage);
+                  window.scrollTo({ top: 0, behavior: 'smooth' });
+                }}
+                aria-current={currentPage === page ? 'page' : undefined}
+              >
+                {page}
+              </button>
+            ))}
+          </nav>
+        )}
       </div>
-    </div>
+    </main>
   );
 }
 

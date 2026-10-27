@@ -1,27 +1,41 @@
+import { Link } from 'react-router-dom';
+import '../App.css';
+
 function Header({ user, onLogout }) {
   return (
-    <header className="header">
-      <nav>
-        <a href="/">Blog Platform</a>
+    <>
+      <header className="header">
+        <nav>
+          <Link to="/" className="brand">
+            Realworld Blog
+          </Link>
 
-        <div>
-          <a href="/">Home</a>
+          <div className="header-links">
+            <Link to="/">Home</Link>
 
-          {user ? (
-            <>
-              <a href="/settings">Settings</a>
-              <a href="/profile">{user.username}</a>
-              <button onClick={onLogout}>Log Out</button>
-            </>
-          ) : (
-            <>
-              <a href="/sign-in">Sign in</a>
-              <a href="/sign-up">Sign up</a>
-            </>
-          )}
-        </div>
-      </nav>
-    </header>
+            {user ? (
+              <>
+                <Link to="/settings">Settings</Link>
+                <Link to="/profile">{user.username}</Link>
+                <button type="button" onClick={onLogout}>
+                  Log Out
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/sign-in">Sign in</Link>
+                <Link to="/sign-up">Sign up</Link>
+              </>
+            )}
+          </div>
+        </nav>
+      </header>
+
+      <section className="hero-banner">
+        <h1>Realworld Blog</h1>
+        <p>A place to share your knowledge.</p>
+      </section>
+    </>
   );
 }
 
