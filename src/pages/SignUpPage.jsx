@@ -1,14 +1,19 @@
-import { useForm } from 'react-hook-form';
+import { useForm, useWatch } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
 
 function SignUpPage({ onLogin }) {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setError,
     formState: { errors, isSubmitting },
   } = useForm();
+
+  const password = useWatch({
+    control,
+    name: 'password',
+  });
 
   const navigate = useNavigate();
 
@@ -40,7 +45,7 @@ function SignUpPage({ onLogin }) {
             if (field === 'body' && message.includes('users.username')) {
               setError('username', {
                 type: 'server',
-                message: 'имя пользователя уже занято',
+                message: 'Имя пользователя уже занято',
               });
             } else if (['username', 'email', 'password'].includes(field)) {
               setError(field, {
@@ -69,7 +74,7 @@ function SignUpPage({ onLogin }) {
     } catch {
       setError('root', {
         type: 'server',
-        message: 'Ошибка соединения. Проверьте интернет.',
+        message: 'Ошибка соединения.',
       });
     }
   };
@@ -132,8 +137,7 @@ function SignUpPage({ onLogin }) {
         placeholder="Repeat password"
         {...register('repeatPassword', {
           required: 'Повторите пароль',
-          validate: (value) =>
-            value === watch('password') || 'Пароль не совпадает',
+          validate: (value) => value === password || 'Пароль не совпадает',
         })}
       />
       {errors.repeatPassword && <p>{errors.repeatPassword.message}</p>}
@@ -142,7 +146,7 @@ function SignUpPage({ onLogin }) {
         <input
           type="checkbox"
           {...register('agreement', {
-            required: 'Необходимо согласие на обработку персональных данных',
+            required: 'Необходимо согласие  обработку персональных данных',
           })}
         />
         Согласна на обработку персональных данных
