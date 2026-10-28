@@ -274,3 +274,402 @@
     font-size: 18px;
   }
 }
+
+.loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 180px;
+  color: #777;
+  font-size: 14px;
+}
+
+.loader-spinner {
+  width: 28px;
+  height: 28px;
+  border: 3px solid #e5e5e5;
+  border-top-color: #5cb85c;
+  border-radius: 50%;
+  animation: loader-spin 0.8s linear infinite;
+}
+
+@keyframes loader-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.header-profile {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+
+.header-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.header-avatar-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  background-color: #e0e0e0;
+  color: #333;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.header-username {
+  overflow-wrap: anywhere;
+}
+
+.auth-page {
+  width: 100%;
+  padding: 32px 16px 48px;
+  background: #ffffff;
+}
+
+.auth-form {
+  width: 100%;
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 24px;
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgb(0 0 0 / 4%);
+  text-align: left;
+}
+
+.auth-form h1 {
+  margin: 0 0 24px;
+  color: #5cb85c;
+  font-size: 28px;
+  font-weight: 400;
+  line-height: 1.3;
+  letter-spacing: normal;
+  text-align: center;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  color: #373a3c;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.form-group input,
+.form-group textarea {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 12px;
+  border: 1px solid #cccccc;
+  border-radius: 4px;
+  background: #ffffff;
+  color: #373a3c;
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+  border-color: #5cb85c;
+  box-shadow: 0 0 0 2px rgb(92 184 92 / 15%);
+}
+
+.form-group input::placeholder,
+.form-group textarea::placeholder {
+  color: #999999;
+}
+
+.form-error {
+  margin: 4px 0 0;
+  color: #d9534f;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.auth-form > button {
+  width: 100%;
+  min-height: 40px;
+  margin-top: 8px;
+  padding: 9px 16px;
+  border: 1px solid #4cae4c;
+  border-radius: 4px;
+  background: #5cb85c;
+  color: #ffffff;
+}
+
+.auth-form > button:hover:not(:disabled) {
+  background: #449d44;
+}
+
+.auth-form > button:disabled {
+  opacity: 0.7;
+}
+
+.auth-form > .logout-button {
+  margin-top: 12px;
+  border-color: #d9534f;
+  background: #ffffff;
+  color: #d9534f;
+}
+
+.auth-form > .logout-button:hover {
+  background: #d9534f;
+  color: #ffffff;
+}
+
+@media (max-width: 600px) {
+  .auth-page {
+    padding: 24px 12px;
+  }
+
+  .auth-form {
+    padding: 18px;
+  }
+
+  .auth-form h1 {
+    font-size: 24px;
+  }
+}
+
+.article-page {
+  min-height: 50vh;
+  padding-bottom: 40px;
+  background: #ffffff;
+}
+
+.article-banner {
+  padding: 32px 16px;
+  background: #333333;
+  color: #ffffff;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 15%);
+}
+
+.article-banner-content {
+  width: 100%;
+  max-width: 1140px;
+  margin: 0 auto;
+}
+
+.article-banner-title {
+  margin: 0 0 24px;
+  color: #ffffff;
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: normal;
+  overflow-wrap: anywhere;
+}
+
+.article-banner-author {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.article-banner-avatar {
+  width: 40px;
+  height: 40px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.article-banner-avatar-placeholder {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #5cb85c;
+  color: #ffffff;
+  font-weight: 600;
+}
+
+.article-banner-username {
+  margin: 0 0 3px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.article-banner-date {
+  color: #cccccc;
+  font-size: 12px;
+}
+
+.article-content {
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: #5cb85c;
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.back-link:hover {
+  color: #449d44;
+  text-decoration: underline;
+}
+
+.article-page-description {
+  margin: 0 0 24px;
+  color: #888888;
+  font-size: 18px;
+  line-height: 1.6;
+}
+
+.article-body {
+  color: #373a3c;
+  font-size: 16px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.article-body h1,
+.article-body h2,
+.article-body h3 {
+  margin: 28px 0 14px;
+  color: #373a3c;
+  font-weight: 600;
+  letter-spacing: normal;
+  line-height: 1.3;
+}
+
+.article-body h1 {
+  font-size: 30px;
+}
+
+.article-body h2 {
+  font-size: 25px;
+}
+
+.article-body h3 {
+  font-size: 20px;
+}
+
+.article-body p {
+  margin: 0 0 18px;
+}
+
+.article-body ul,
+.article-body ol {
+  margin: 0 0 18px;
+  padding-left: 28px;
+}
+
+.article-body blockquote {
+  margin: 20px 0;
+  padding: 8px 16px;
+  border-left: 4px solid #5cb85c;
+  color: #777777;
+}
+
+.article-body pre {
+  max-width: 100%;
+  padding: 16px;
+  overflow-x: auto;
+  border-radius: 4px;
+  background: #f5f5f5;
+}
+
+.article-body code {
+  font-family: Consolas, monospace;
+  font-size: 14px;
+}
+
+.article-body img {
+  height: auto;
+  border-radius: 4px;
+}
+
+.article-page-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 28px;
+  padding-top: 16px;
+  border-top: 1px solid #eeeeee;
+}
+
+.article-page-message {
+  margin: 24px 16px;
+  color: #d9534f;
+  text-align: center;
+}
+
+@media (max-width: 600px) {
+  .article-banner {
+    padding: 24px 16px;
+  }
+
+  .article-banner-title {
+    font-size: 27px;
+  }
+
+  .article-content {
+    padding: 20px 16px;
+  }
+
+  .article-page-description {
+    font-size: 16px;
+  }
+
+  .article-body {
+    font-size: 15px;
+  }
+}
+
+.agreement-group {
+  margin-top: 4px;
+}
+
+.agreement-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-weight: 400 !important;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.agreement-label input {
+  width: 16px;
+  min-height: 16px;
+  margin: 3px 0 0;
+  flex-shrink: 0;
+  accent-color: #5cb85c;
+}
+
+.auth-switch {
+  margin: 20px 0 0;
+  color: #777777;
+  font-size: 14px;
+  text-align: center;
+}
+
+.auth-switch a {
+  color: #5cb85c;
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}

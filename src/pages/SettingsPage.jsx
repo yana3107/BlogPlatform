@@ -1,8 +1,11 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/useAuth.jsx';
+import { API_BASE_URL } from '../api/config.js';
 
 function SettingsPage() {
-  const user = JSON.parse(localStorage.getItem('user')) || {};
+  const { user, updateUser, logout } = useAuth();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -11,30 +14,38 @@ function SettingsPage() {
     formState: { errors, isSubmitting },
   } = useForm({
     defaultValues: {
-      username: user.username || '',
-      email: user.email || '',
-      image: user.image || '',
+      username: user?.username || '',
+      email: user?.email || '',
+      bio: user?.bio || '',
+      image: user?.image || '',
       password: '',
     },
   });
-
-  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     try {
       const token = localStorage.getItem('token');
 
+      if (!token) {
+        setError('root', {
+          type: 'auth',
+          message: 'Необходимо войти в аккаунт повторно.',
+        });
+        return;
+      }
+
       const updatedUser = {
-        username: data.username,
-        email: data.email,
-        image: data.image || null,
+        username: data.username.trim(),
+        email: data.email.trim(),
+        bio: data.bio.trim(),
+        image: data.image.trim() || null,
       };
 
       if (data.password.trim()) {
         updatedUser.password = data.password;
       }
 
-      const response = await fetch('https://realworld.habsida.net/api/user', {
+      const response = await fetch(`${API_BASE_URL}/user`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -50,26 +61,25 @@ function SettingsPage() {
       if (!response.ok) {
         const messages = result.errors
           ? Object.entries(result.errors)
-              .map(
-                ([field, value]) =>
-                  `${field}: ${Array.isArray(value) ? value.join(', ') : value}`,
-              )
+              .map(([field, value]) => {
+                const message = Array.isArray(value)
+                  ? value.join(', ')
+                  : String(value);
+
+                return `${field}: ${message}`;
+              })
               .join('. ')
-          : 'Не удалось сохранить настройки';
+          : 'Не удалось сохранить настройки.';
 
         setError('root', {
           type: 'server',
           message: messages,
         });
-
         return;
       }
 
-      localStorage.setItem('user', JSON.stringify(result.user));
-      localStorage.setItem('token', result.user.token);
-
+      updateUser(result.user);
       navigate('/');
-      window.location.reload();
     } catch {
       setError('root', {
         type: 'server',
@@ -78,56 +88,146 @@ function SettingsPage() {
     }
   };
 
+  const handleLogout = () => {
+    logout();
+    navigate('/');
+  };
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <h1>Your Settings</h1>
+    <main className="auth-page">
+      <form className="auth-form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <h1>Настройки профиля</h1>
 
-      {errors.root && <p>{errors.root.message}</p>}
+        {errors.root && (
+          <p role="alert" className="form-error">
+            {errors.root.message}
+          </p>
+        )}
 
-      <input
-        type="text"
-        placeholder="Username"
-        {...register('username', {
-          required: 'Введите username',
-          minLength: {
-            value: 3,
-            message: 'Минимум 3 символа',
-          },
-        })}
-      />
-      {errors.username && <p>{errors.username.message}</p>}
+        <div className="form-group">
+          <label htmlFor="username">Имя пользователя</label>
+          <input
+            id="username"
+            type="text"
+            autoComplete="username"
+            placeholder="Введите имя пользователя"
+            aria-invalid={Boolean(errors.username)}
+            {...register('username', {
+              required: 'Введите имя пользователя',
+              minLength: {
+                value: 3,
+                message: 'Минимум 3 символа',
+              },
+            })}
+          />
+          {errors.username && (
+            <p role="alert" className="form-error">
+              {errors.username.message}
+            </p>
+          )}
+        </div>
 
-      <input
-        type="email"
-        placeholder="Email"
-        {...register('email', {
-          required: 'Введите email',
-          pattern: {
-            value: /^\S+@\S+\.\S+$/,
-            message: 'Введите корректный email',
-          },
-        })}
-      />
-      {errors.email && <p>{errors.email.message}</p>}
+        <div className="form-group">
+          <label htmlFor="email">Электронная почта</label>
+          <input
+            id="email"
+            type="email"
+            autoComplete="email"
+            placeholder="Введите электронную почту"
+            aria-invalid={Boolean(errors.email)}
+            {...register('email', {
+              required: 'Введите электронную почту',
+              pattern: {
+                value: /^\S+@\S+\.\S+$/,
+                message: 'Введите корректный email',
+              },
+            })}
+          />
+          {errors.email && (
+            <p role="alert" className="form-error">
+              {errors.email.message}
+            </p>
+          )}
+        </div>
 
-      <input
-        type="password"
-        placeholder="New password"
-        {...register('password', {
-          minLength: {
-            value: 6,
-            message: 'Минимум 6 символов',
-          },
-        })}
-      />
-      {errors.password && <p>{errors.password.message}</p>}
+        <div className="form-group">
+          <label htmlFor="bio">О себе</label>
+          <textarea
+            id="bio"
+            rows={3}
+            placeholder="Расскажите немного о себе"
+            {...register('bio')}
+          />
+        </div>
 
-      <input type="url" placeholder="Avatar image URL" {...register('image')} />
+        <div className="form-group">
+          <label htmlFor="password">Новый пароль</label>
+          <input
+            id="password"
+            type="password"
+            autoComplete="new-password"
+            placeholder="Введите новый пароль"
+            aria-invalid={Boolean(errors.password)}
+            {...register('password', {
+              validate: (value) =>
+                !value || value.length >= 6 || 'Минимум 6 символов',
+            })}
+          />
+          {errors.password && (
+            <p role="alert" className="form-error">
+              {errors.password.message}
+            </p>
+          )}
+        </div>
 
-      <button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Saving...' : 'Save settings'}
-      </button>
-    </form>
+        <div className="form-group">
+          <label htmlFor="image">URL изображения аватара</label>
+          <input
+            id="image"
+            type="url"
+            placeholder="https://example.com/avatar.png"
+            aria-invalid={Boolean(errors.image)}
+            {...register('image', {
+              validate: (value) => {
+                const imageUrl = value?.trim() || '';
+
+                if (!imageUrl) {
+                  return true;
+                }
+
+                try {
+                  const url = new URL(imageUrl);
+
+                  if (
+                    !['http:', 'https:'].includes(url.protocol) ||
+                    !url.hostname
+                  ) {
+                    return 'Укажите URL, начинающийся с http:// или https://';
+                  }
+
+                  return true;
+                } catch {
+                  return 'Введите корректный URL изображения';
+                }
+              },
+            })}
+          />
+          {errors.image && (
+            <p role="alert" className="form-error">
+              {errors.image.message}
+            </p>
+          )}
+        </div>
+
+        <button type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Сохранение...' : 'Сохранить настройки'}
+        </button>
+
+        <button type="button" className="logout-button" onClick={handleLogout}>
+          Выйти из аккаунта
+        </button>
+      </form>
+    </main>
   );
 }
 
