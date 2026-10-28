@@ -25,7 +25,7 @@ function ArticlePage() {
         });
 
         if (!response.ok) {
-          throw new Error('Не удалось загрузить статью.');
+          throw new Error('Failed to load article.');
         }
 
         const data = await response.json();
@@ -51,7 +51,7 @@ function ArticlePage() {
       <main className="article-page">
         <div className="loader">
           <span className="loader-spinner" />
-          <span>Загрузка статьи...</span>
+          <span>Loading article...</span>
         </div>
       </main>
     );
@@ -61,17 +61,17 @@ function ArticlePage() {
     return (
       <main className="article-page">
         <p className="article-page-message" role="alert">
-          {error || 'Статья не найдена.'}
+          {error || 'Article not found.'}
         </p>
         <Link to="/articles" className="back-link">
-          Назад ко всем статьям
+          Back to all articles
         </Link>
       </main>
     );
   }
 
   const author = article.author;
-  const username = author?.username || 'Неизвестный автор';
+  const username = author?.username || 'Unknown author';
   const avatar = author?.image;
   const tags = article.tagList || [];
 
@@ -124,7 +124,7 @@ function ArticlePage() {
 
       <div className="article-content">
         <Link to="/articles" className="back-link">
-          ← Назад ко всем статьям
+          Back to all articles
         </Link>
 
         {article.description && (
@@ -136,7 +136,7 @@ function ArticlePage() {
         </div>
 
         {tags.length > 0 && (
-          <div className="article-page-tags" aria-label="Теги статьи">
+          <div className="article-page-tags" aria-label="Article tags">
             {tags.map((tag) => (
               <span className="article-tag" key={tag}>
                 {tag}

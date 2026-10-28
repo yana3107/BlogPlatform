@@ -46,7 +46,7 @@ function SignUpPage({ onLogin }) {
             if (field === 'body' && message.includes('users.username')) {
               setError('username', {
                 type: 'server',
-                message: 'Имя пользователя уже занято',
+                message: 'Username is already taken',
               });
             } else if (['username', 'email', 'password'].includes(field)) {
               setError(field, {
@@ -63,7 +63,7 @@ function SignUpPage({ onLogin }) {
         } else {
           setError('root', {
             type: 'server',
-            message: 'Не удалось зарегистрироваться. Попробуйте ещё раз.',
+            message: 'Registration failed. Please try again.',
           });
         }
 
@@ -75,7 +75,7 @@ function SignUpPage({ onLogin }) {
     } catch {
       setError('root', {
         type: 'server',
-        message: 'Ошибка соединения.',
+        message: 'Connection error. Please try again.',
       });
     }
   };
@@ -100,19 +100,21 @@ function SignUpPage({ onLogin }) {
             autoComplete="username"
             aria-invalid={Boolean(errors.username)}
             {...register('username', {
-              required: 'Введите username',
+              required: 'Username is required',
               minLength: {
                 value: 3,
-                message: 'Минимум 3 символа',
+                message: 'Username must be at least 3 characters long',
               },
               maxLength: {
                 value: 20,
-                message: 'Максимум 20 символов',
+                message: 'Username must be no more than 20 characters long',
               },
             })}
           />
           {errors.username && (
-            <p className="form-error">{errors.username.message}</p>
+            <p className="form-error" role="alert">
+              {errors.username.message}
+            </p>
           )}
         </div>
 
@@ -125,14 +127,18 @@ function SignUpPage({ onLogin }) {
             autoComplete="email"
             aria-invalid={Boolean(errors.email)}
             {...register('email', {
-              required: 'Введите email',
+              required: 'Email is required',
               pattern: {
                 value: /^\S+@\S+\.\S+$/,
-                message: 'Введите правильный email',
+                message: 'Please enter a valid email address',
               },
             })}
           />
-          {errors.email && <p className="form-error">{errors.email.message}</p>}
+          {errors.email && (
+            <p className="form-error" role="alert">
+              {errors.email.message}
+            </p>
+          )}
         </div>
 
         <div className="form-group">
@@ -144,19 +150,21 @@ function SignUpPage({ onLogin }) {
             autoComplete="new-password"
             aria-invalid={Boolean(errors.password)}
             {...register('password', {
-              required: 'Введите пароль',
+              required: 'Password is required',
               minLength: {
                 value: 6,
-                message: 'Минимум 6 символов',
+                message: 'Password must be at least 6 characters long',
               },
               maxLength: {
                 value: 40,
-                message: 'Максимум 40 символов',
+                message: 'Password must be no more than 40 characters long',
               },
             })}
           />
           {errors.password && (
-            <p className="form-error">{errors.password.message}</p>
+            <p className="form-error" role="alert">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
@@ -169,12 +177,15 @@ function SignUpPage({ onLogin }) {
             autoComplete="new-password"
             aria-invalid={Boolean(errors.repeatPassword)}
             {...register('repeatPassword', {
-              required: 'Повторите пароль',
-              validate: (value) => value === password || 'Пароль не совпадает',
+              required: 'Please repeat your password',
+              validate: (value) =>
+                value === password || 'Passwords do not match',
             })}
           />
           {errors.repeatPassword && (
-            <p className="form-error">{errors.repeatPassword.message}</p>
+            <p className="form-error" role="alert">
+              {errors.repeatPassword.message}
+            </p>
           )}
         </div>
 
@@ -184,14 +195,15 @@ function SignUpPage({ onLogin }) {
               id="agreement"
               type="checkbox"
               {...register('agreement', {
-                required:
-                  'Необходимо согласие на обработку персональных данных',
+                required: 'You must agree to the processing of personal data',
               })}
             />
-            <span>Согласна на обработку персональных данных</span>
+            <span>I agree to the processing of my personal data</span>
           </label>
           {errors.agreement && (
-            <p className="form-error">{errors.agreement.message}</p>
+            <p className="form-error" role="alert">
+              {errors.agreement.message}
+            </p>
           )}
         </div>
 

@@ -43,12 +43,13 @@ function SignInPage({ onLogin }) {
 
           setError('root', {
             type: 'server',
-            message: messages || 'Не удалось войти. Проверьте данные.',
+            message:
+              messages || 'Unable to sign in. Please check your details.',
           });
         } else {
           setError('root', {
             type: 'server',
-            message: 'Не удалось войти. Проверьте email и пароль.',
+            message: 'Unable to sign in. Please check your email and password.',
           });
         }
 
@@ -60,7 +61,7 @@ function SignInPage({ onLogin }) {
     } catch {
       setError('root', {
         type: 'server',
-        message: 'Ошибка соединения. Проверьте интернет.',
+        message: 'Connection error. Please check your internet connection.',
       });
     }
   };
@@ -85,14 +86,18 @@ function SignInPage({ onLogin }) {
             autoComplete="email"
             aria-invalid={Boolean(errors.email)}
             {...register('email', {
-              required: 'Введите email',
+              required: 'Email is required',
               pattern: {
                 value: /^\S+@\S+\.\S+$/,
-                message: 'Введите правильный email',
+                message: 'Please enter a valid email address',
               },
             })}
           />
-          {errors.email && <p className="form-error">{errors.email.message}</p>}
+          {errors.email && (
+            <p className="form-error" role="alert">
+              {errors.email.message}
+            </p>
+          )}
         </div>
 
         <div className="form-group">
@@ -104,11 +109,13 @@ function SignInPage({ onLogin }) {
             autoComplete="current-password"
             aria-invalid={Boolean(errors.password)}
             {...register('password', {
-              required: 'Введите пароль',
+              required: 'Password is required',
             })}
           />
           {errors.password && (
-            <p className="form-error">{errors.password.message}</p>
+            <p className="form-error" role="alert">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
@@ -117,7 +124,7 @@ function SignInPage({ onLogin }) {
         </button>
 
         <p className="auth-switch">
-          <Link to="/sign-up">Создать аккаунт</Link>
+          <Link to="/sign-up">Create an account</Link>
         </p>
       </form>
     </main>

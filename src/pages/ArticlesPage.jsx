@@ -51,7 +51,7 @@ function ArticlesPage() {
         );
 
         if (!response.ok) {
-          throw new Error('Не удалось загрузить статьи');
+          throw new Error('Failed to load articles');
         }
 
         const data = await response.json();
@@ -128,7 +128,7 @@ function ArticlesPage() {
 
         {error && (
           <p className="articles-message" role="alert">
-            Ошибка: {error}
+            Error: {error}
           </p>
         )}
 
@@ -136,7 +136,7 @@ function ArticlesPage() {
           {loading ? (
             <div className="loader" role="status">
               <span className="loader-spinner" />
-              <span>Загрузка статей...</span>
+              <span>Loading articles...</span>
             </div>
           ) : (
             !error &&
@@ -159,7 +159,7 @@ function ArticlesPage() {
 
                     <div>
                       <p className="author-name">
-                        {article.author?.username || 'Неизвестный автор'}
+                        {article.author?.username || 'Unknown author'}
                       </p>
 
                       <p className="article-date">
@@ -202,12 +202,12 @@ function ArticlesPage() {
           )}
 
           {!loading && !error && articles.length === 0 && (
-            <p>Статьи не найдены.</p>
+            <p>No articles found.</p>
           )}
         </div>
 
         {totalPages > 0 && (
-          <nav className="pagination" aria-label="Пагинация">
+          <nav className="pagination" aria-label="Pagination">
             {pageNumbers.map((page) => (
               <button
                 className={`pagination-button ${

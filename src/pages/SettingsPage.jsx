@@ -29,7 +29,7 @@ function SettingsPage() {
       if (!token) {
         setError('root', {
           type: 'auth',
-          message: 'Необходимо войти в аккаунт повторно.',
+          message: 'Authentication error.',
         });
         return;
       }
@@ -69,7 +69,7 @@ function SettingsPage() {
                 return `${field}: ${message}`;
               })
               .join('. ')
-          : 'Не удалось сохранить настройки.';
+          : 'Failed to save settings.';
 
         setError('root', {
           type: 'server',
@@ -83,7 +83,7 @@ function SettingsPage() {
     } catch {
       setError('root', {
         type: 'server',
-        message: 'Ошибка соединения. Попробуйте ещё раз.',
+        message: 'Connection error. Please try again.',
       });
     }
   };
@@ -96,7 +96,7 @@ function SettingsPage() {
   return (
     <main className="auth-page">
       <form className="auth-form" onSubmit={handleSubmit(onSubmit)} noValidate>
-        <h1>Настройки профиля</h1>
+        <h1>Your Settings</h1>
 
         {errors.root && (
           <p role="alert" className="form-error">
@@ -105,18 +105,18 @@ function SettingsPage() {
         )}
 
         <div className="form-group">
-          <label htmlFor="username">Имя пользователя</label>
+          <label htmlFor="username">Username</label>
           <input
             id="username"
             type="text"
             autoComplete="username"
-            placeholder="Введите имя пользователя"
+            placeholder="Enter username"
             aria-invalid={Boolean(errors.username)}
             {...register('username', {
-              required: 'Введите имя пользователя',
+              required: 'Username is required',
               minLength: {
                 value: 3,
-                message: 'Минимум 3 символа',
+                message: 'Username must be at least 3 characters long',
               },
             })}
           />
@@ -128,18 +128,18 @@ function SettingsPage() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="email">Электронная почта</label>
+          <label htmlFor="email">Email</label>
           <input
             id="email"
             type="email"
             autoComplete="email"
-            placeholder="Введите электронную почту"
+            placeholder="Enter email"
             aria-invalid={Boolean(errors.email)}
             {...register('email', {
-              required: 'Введите электронную почту',
+              required: 'Email is required',
               pattern: {
                 value: /^\S+@\S+\.\S+$/,
-                message: 'Введите корректный email',
+                message: 'Please enter a valid email address',
               },
             })}
           />
@@ -151,26 +151,18 @@ function SettingsPage() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="bio">О себе</label>
-          <textarea
-            id="bio"
-            rows={3}
-            placeholder="Расскажите немного о себе"
-            {...register('bio')}
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="password">Новый пароль</label>
+          <label htmlFor="password">New Password</label>
           <input
             id="password"
             type="password"
             autoComplete="new-password"
-            placeholder="Введите новый пароль"
+            placeholder="Enter new password"
             aria-invalid={Boolean(errors.password)}
             {...register('password', {
               validate: (value) =>
-                !value || value.length >= 6 || 'Минимум 6 символов',
+                !value ||
+                value.length >= 6 ||
+                'Password must be at least 6 characters long',
             })}
           />
           {errors.password && (
@@ -181,7 +173,7 @@ function SettingsPage() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="image">URL изображения аватара</label>
+          <label htmlFor="image">Avatar Image URL</label>
           <input
             id="image"
             type="url"
@@ -202,12 +194,12 @@ function SettingsPage() {
                     !['http:', 'https:'].includes(url.protocol) ||
                     !url.hostname
                   ) {
-                    return 'Укажите URL, начинающийся с http:// или https://';
+                    return 'URL must start with http:// or https://';
                   }
 
                   return true;
                 } catch {
-                  return 'Введите корректный URL изображения';
+                  return 'Please enter a valid image URL';
                 }
               },
             })}
@@ -220,11 +212,11 @@ function SettingsPage() {
         </div>
 
         <button type="submit" disabled={isSubmitting}>
-          {isSubmitting ? 'Сохранение...' : 'Сохранить настройки'}
+          {isSubmitting ? 'Saving...' : 'Save Settings'}
         </button>
 
         <button type="button" className="logout-button" onClick={handleLogout}>
-          Выйти из аккаунта
+          Log Out
         </button>
       </form>
     </main>
