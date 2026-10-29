@@ -1,17 +1,20 @@
 import { useEffect, useState } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import ReactMarkdown from 'react-markdown';
 import { format } from 'date-fns';
 import { enUS } from 'date-fns/locale';
 import { API_BASE_URL } from '../api/config.js';
 
+import { useAuth } from '../context/useAuth.jsx';
 function ArticlePage() {
   const { slug } = useParams();
-
   const [article, setArticle] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const { user } = useAuth();
+  const navigate = useNavigate();
   useEffect(() => {
     const controller = new AbortController();
 
@@ -45,7 +48,36 @@ function ArticlePage() {
 
     return () => controller.abort();
   }, [slug]);
+  async function deleteArticle() {
+    const token = user?.token || localStorage.getItem('token');
 
+    if (!token) {
+      setError('Please sign in to delete the article.');
+      return;
+    }
+
+    try {
+      setIsDeleting(true);
+
+      const response = await fetch(`${API_BASE_URL}/articles/${slug}`, {
+        method: 'DELETE',
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete the article.');
+      }
+
+      navigate('/articles');
+    } catch (err) {
+      setError(err.message || 'Failed to delete the article.');
+      setIsDeleteModalOpen(false);
+    } finally {
+      setIsDeleting(false);
+    }
+  }
   if (loading) {
     return (
       <main className="article-page">
@@ -118,6 +150,14 @@ function ArticlePage() {
                 </time>
               )}
             </div>
+
+            <div className="article-actions">
+              <Link to={`/articles/${slug}/edit`}>Edit</Link>
+
+              <button type="button" onClick={() => setIsDeleteModalOpen(true)}>
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       </section>
@@ -145,6 +185,38 @@ function ArticlePage() {
           </div>
         )}
       </div>
+      {isDeleteModalOpen && (
+        <div className="modal-backdrop">
+          <div
+            className="confirmation-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="delete-modal-title"
+          >
+            <h2 id="delete-modal-title">Delete Article</h2>
+
+            <p>Are you sure you want to delete this article?</p>
+
+            <div className="modal-actions">
+              <button
+                type="button"
+                onClick={() => setIsDeleteModalOpen(false)}
+                disabled={isDeleting}
+              >
+                Cancel
+              </button>
+
+              <button
+                type="button"
+                onClick={deleteArticle}
+                disabled={isDeleting}
+              >
+                {isDeleting ? 'Deleting...' : 'Confirm'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

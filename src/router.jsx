@@ -11,6 +11,8 @@ import ArticlesPage from './pages/ArticlesPage.jsx';
 import ArticlePage from './pages/ArticlePage.jsx';
 import SettingsPage from './pages/SettingsPage.jsx';
 import ProfilePage from './pages/ProfilePage.jsx';
+import NewArticlePage from './pages/NewArticlePage.jsx';
+import EditArticlePage from './pages/EditArticlePage.jsx';
 
 const router = createBrowserRouter([
   {
@@ -47,6 +49,14 @@ const router = createBrowserRouter([
           {
             path: 'profile',
             element: <ProfilePage />,
+          },
+          {
+            path: 'new-article',
+            element: <NewArticlePage />,
+          },
+          {
+            path: 'articles/:slug/edit',
+            element: <EditArticlePage />,
           },
         ],
       },

@@ -51,7 +51,7 @@ function ArticlesPage() {
         );
 
         if (!response.ok) {
-          throw new Error('Failed to load articles');
+          throw new Error('Failed to load articles.');
         }
 
         const data = await response.json();
