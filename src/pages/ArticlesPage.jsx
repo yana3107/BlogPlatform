@@ -3,8 +3,12 @@ import { Link, useSearchParams } from 'react-router-dom';
 import { format } from 'date-fns';
 import '../App.css';
 import { API_BASE_URL } from '../api/config.js';
-
+import { toggleFavorite } from '../api/articles.js';
+import { useAuth } from '../context/useAuth.jsx';
 function ArticlesPage() {
+  const { user } = useAuth();
+  const [favoriteError, setFavoriteError] = useState('');
+  const [favoriteLoading, setFavoriteLoading] = useState([]);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const pageFromUrl = Number(searchParams.get('page'));
@@ -115,7 +119,38 @@ function ArticlesPage() {
       behavior: 'smooth',
     });
   };
+  async function handleFavorite(article) {
+    if (!user) {
+      setFavoriteError('Please sign in to like articles.');
+      return;
+    }
 
+    if (favoriteLoading.includes(article.slug)) {
+      return;
+    }
+
+    setFavoriteError('');
+    setFavoriteLoading((previous) => [...previous, article.slug]);
+
+    try {
+      const updatedArticle = await toggleFavorite(
+        article.slug,
+        article.favorited,
+      );
+
+      setArticles((previous) =>
+        previous.map((item) =>
+          item.slug === article.slug ? updatedArticle : item,
+        ),
+      );
+    } catch (err) {
+      setFavoriteError(err.message);
+    } finally {
+      setFavoriteLoading((previous) =>
+        previous.filter((slug) => slug !== article.slug),
+      );
+    }
+  }
   return (
     <main className="articles-page">
       <section className="hero-banner">
@@ -125,7 +160,11 @@ function ArticlesPage() {
 
       <div className="articles-container">
         <h1 className="articles-heading">Articles</h1>
-
+        {favoriteError && (
+          <p className="articles-message" role="alert">
+            {favoriteError}
+          </p>
+        )}
         {error && (
           <p className="articles-message" role="alert">
             Error: {error}
@@ -169,16 +208,19 @@ function ArticlesPage() {
                       </p>
                     </div>
                   </div>
-
                   <button
-                    className="favorite-button"
+                    className={`favorite-button ${article.favorited ? 'favorited' : ''}`}
                     type="button"
-                    disabled
-                    aria-label={`Favorites: ${article.favoritesCount}`}
+                    disabled={favoriteLoading.includes(article.slug)}
+                    onClick={() => handleFavorite(article)}
+                    aria-pressed={Boolean(article.favorited)}
+                    aria-label={
+                      article.favorited ? 'Remove favorite' : 'Add favorite'
+                    }
                   >
                     <span aria-hidden="true">♥</span>
                     {article.favoritesCount}
-                  </button>
+                  </button>{' '}
                 </div>
 
                 <Link
